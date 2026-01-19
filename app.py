@@ -1,5 +1,6 @@
 import pandas as pd
 from flask import Flask, jsonify
+import os
 
 app = Flask(__name__)
 
@@ -19,4 +20,5 @@ def prioritize():
     return jsonify(risk.to_dict(orient="records"))
 
 if __name__ == "__main__":
-    app.run()
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
