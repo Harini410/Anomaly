@@ -1,6 +1,10 @@
 import pandas as pd
 from flask import Flask, jsonify, render_template
 import os
+from flask import redirect
+
+
+
 
 app = Flask(__name__)
 
@@ -23,9 +27,6 @@ def compute_risk():
     )
     return risk.sort_values("score", ascending=False)
 
-@app.route("/")
-def dashboard():
-    return render_template("dashboard.html", data=compute_risk().to_dict(orient="records"))
 
 @app.route("/prioritize")
 def prioritize():
@@ -40,7 +41,10 @@ def scan():
 def recover():
     risk = compute_risk()
     return jsonify({"recovery_order": risk["asset"].tolist()})
-
+@app.route("/")
+def home():
+    return redirect("/dashboard")
+    
 @app.route("/dashboard")
 def full_dashboard():
     risk = compute_risk()
