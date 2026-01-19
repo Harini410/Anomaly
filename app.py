@@ -41,6 +41,31 @@ def recover():
     risk = compute_risk()
     return jsonify({"recovery_order": risk["asset"].tolist()})
 
+@app.route("/dashboard")
+def full_dashboard():
+    risk = compute_risk()
+    files = pd.read_csv("data/file_events.csv")
+    net = pd.read_csv("data/network_edges.csv")
+
+    p1 = risk[risk["priority"] == "P1"]
+
+    resources = [
+        "File activity logs",
+        "Network telemetry",
+        "Compute resources for scan",
+        "Backup repositories"
+    ]
+
+    return render_template(
+        "full_dashboard.html",
+        resources=resources,
+        assets=risk.to_dict(orient="records"),
+        file_data=files.to_dict(orient="records"),
+        net_data=net.to_dict(orient="records"),
+        p1_assets=p1.to_dict(orient="records")
+    )
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
