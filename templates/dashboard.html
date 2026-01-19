@@ -1,38 +1,107 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Enterprise Ransomware Recovery Dashboard</title>
+<title>Ransomware Asset Analysis & Recovery</title>
 <style>
-body { font-family: 'Segoe UI'; background:#0f172a; color:#e5e7eb; padding:30px; }
-h2 { text-align:center; margin-bottom:25px; }
-table { width:90%; margin:auto; border-collapse:collapse; background:#020617; }
-th,td { padding:12px; border-bottom:1px solid #1e293b; text-align:center; }
+body { font-family: Arial; background:#0f172a; color:#e5e7eb; padding:30px; }
+h1,h2 { text-align:center; }
+section { margin-bottom:50px; }
+table { width:95%; margin:auto; border-collapse:collapse; background:#020617; }
+th,td { padding:10px; border:1px solid #1e293b; text-align:center; }
 th { background:#020617; color:#38bdf8; }
-tr:hover { background:#020617; }
 .P1 { color:#f87171; font-weight:bold; }
 .P3 { color:#facc15; font-weight:bold; }
 .P4 { color:#4ade80; font-weight:bold; }
-.badge { padding:4px 10px; border-radius:12px; }
+button { padding:10px 15px; background:#2563eb; color:white; border:none; border-radius:6px; cursor:pointer; }
 </style>
 </head>
 <body>
 
-<h2>Ransomware Asset Analysis & Recovery – Enterprise Dashboard</h2>
+<h1>Ransomware Asset Analysis & Recovery – Unified Dashboard</h1>
 
+<!-- Resources -->
+<section>
+<h2>Resources Used</h2>
+<ul>
+{% for r in resources %}
+<li>{{ r }}</li>
+{% endfor %}
+</ul>
+</section>
+
+<!-- Assets -->
+<section>
+<h2>Asset Risk & Priority</h2>
 <table>
+<tr><th>Asset ID</th><th>Risk Score</th><th>Priority</th></tr>
+{% for a in assets %}
 <tr>
-<th>Asset</th>
-<th>Risk Score</th>
-<th>Priority</th>
-</tr>
-{% for r in data %}
-<tr>
-<td>{{ r.asset }}</td>
-<td>{{ r.score }}</td>
-<td class="{{ r.priority }}">{{ r.priority }}</td>
+<td>{{ a.asset }}</td>
+<td>{{ a.score }}</td>
+<td class="{{ a.priority }}">{{ a.priority }}</td>
 </tr>
 {% endfor %}
 </table>
+</section>
+
+<!-- Top Priority Plan -->
+<section>
+<h2>Top Priority Recovery Plan (P1)</h2>
+<table>
+<tr><th>Asset</th><th>Action</th></tr>
+{% for a in p1_assets %}
+<tr>
+<td>{{ a.asset }}</td>
+<td>Isolate → Deep Scan → Restore from clean backup</td>
+</tr>
+{% endfor %}
+</table>
+</section>
+
+<!-- File Dataset -->
+<section>
+<h2>Actual Dataset – File Behavior</h2>
+<table>
+<tr>
+{% for col in file_data[0].keys() %}
+<th>{{ col }}</th>
+{% endfor %}
+</tr>
+{% for row in file_data %}
+<tr>
+{% for v in row.values() %}
+<td>{{ v }}</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</table>
+</section>
+
+<!-- Network Dataset -->
+<section>
+<h2>Actual Dataset – Network Relationships</h2>
+<table>
+<tr>
+{% for col in net_data[0].keys() %}
+<th>{{ col }}</th>
+{% endfor %}
+</tr>
+{% for row in net_data %}
+<tr>
+{% for v in row.values() %}
+<td>{{ v }}</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</table>
+</section>
+
+<!-- Actions -->
+<section style="text-align:center">
+<h2>Actions</h2>
+<a href="/full-report"><button>Download Full PDF Report</button></a>
+<a href="/network-graph"><button>View Network Graph</button></a>
+</section>
 
 </body>
 </html>
