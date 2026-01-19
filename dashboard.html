@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Enterprise Ransomware Recovery Dashboard</title>
+<style>
+body { font-family: 'Segoe UI'; background:#0f172a; color:#e5e7eb; padding:30px; }
+h2 { text-align:center; margin-bottom:25px; }
+table { width:90%; margin:auto; border-collapse:collapse; background:#020617; }
+th,td { padding:12px; border-bottom:1px solid #1e293b; text-align:center; }
+th { background:#020617; color:#38bdf8; }
+tr:hover { background:#020617; }
+.P1 { color:#f87171; font-weight:bold; }
+.P3 { color:#facc15; font-weight:bold; }
+.P4 { color:#4ade80; font-weight:bold; }
+.badge { padding:4px 10px; border-radius:12px; }
+</style>
+</head>
+<body>
+
+<h2>Ransomware Asset Analysis & Recovery – Enterprise Dashboard</h2>
+
+<table>
+<tr>
+<th>Asset</th>
+<th>Risk Score</th>
+<th>Priority</th>
+</tr>
+{% for r in data %}
+<tr>
+<td>{{ r.asset }}</td>
+<td>{{ r.score }}</td>
+<td class="{{ r.priority }}">{{ r.priority }}</td>
+</tr>
+{% endfor %}
+</table>
+
+</body>
+</html>
