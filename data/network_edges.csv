@@ -1,0 +1,3 @@
+src,dst,connections
+server1,server2,20
+server2,server3,5

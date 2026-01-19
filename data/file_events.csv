@@ -1,0 +1,4 @@
+asset,encrypt_ops,rename_ops
+server1,10,5
+server2,1,0
+server3,3,1
