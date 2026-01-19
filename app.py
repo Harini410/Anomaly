@@ -1,22 +1,46 @@
 import pandas as pd
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
+import os
 
 app = Flask(__name__)
 
-@app.route("/prioritize")
-def prioritize():
+def compute_risk():
     files = pd.read_csv("data/file_events.csv")
     net = pd.read_csv("data/network_edges.csv")
 
     files["score"] = files["encrypt_ops"]*3 + files["rename_ops"]*2
     risk = files.groupby("asset")["score"].sum().reset_index()
 
+    high_risk = risk[risk["score"] > 25]["asset"].tolist()
+    for _, row in net.iterrows():
+        if row["src"] in high_risk:
+            risk.loc[risk["asset"] == row["dst"], "score"] += 6
+
     risk["priority"] = pd.cut(
         risk["score"],
-        bins=[-1,5,20,1000],
+        bins=[-1,8,25,1000],
         labels=["P4","P3","P1"]
     )
-    return jsonify(risk.to_dict(orient="records"))
+    return risk.sort_values("score", ascending=False)
+
+@app.route("/")
+def dashboard():
+    return render_template("dashboard.html", data=compute_risk().to_dict(orient="records"))
+
+@app.route("/prioritize")
+def prioritize():
+    return jsonify(compute_risk().to_dict(orient="records"))
+
+@app.route("/scan")
+def scan():
+    risk = compute_risk()
+    return jsonify({"scan_targets": risk[risk["priority"].isin(["P1","P3"])]["asset"].tolist()})
+
+@app.route("/recover")
+def recover():
+    risk = compute_risk()
+    return jsonify({"recovery_order": risk["asset"].tolist()})
 
 if __name__ == "__main__":
-    app.run()
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
